@@ -1,0 +1,128 @@
+1) Text and document translation works for all languages available in API.
+Not possible to provide a solution. I tryed from UI and from API single translation but not sure how can I do it.
+With more time I would try to automate it using python(I remember I did something like that in an online tutorial). First call languaje-pairs to get all pairs, and the for every single pair call api/v1/translations/text with a simple text and an assertion to response code=200
+-idem with documents using api/v1/translations/documents-
+
+I run out of time.
+
+
+2)  The UI navigation and looks are correct on desktop and mobile.
+I checked this point using the chrome DEVTOOL and changing the page dimensions using the Toggle Device Toolbar. Works OK
+
+3) UI based on the API results.
+To check this point I used the Chrome DevTool, into NETWORK section we can see that the request is sent to the API. On HEADER section we can see the URL (Request URL:
+https://demo-qa-lwt.staging.lw-ml.net/p/api/v1/translations/text) and the response code (200). 
+Moreover in the PAYLOAD section we can see the request parameters,
+		{sourceText: "hola madre", targetLanguage: "ro", sourceLanguage: "es"}
+		sourceLanguage
+		: 
+		"es"
+		sourceText
+		: 
+		"hola madre"
+		targetLanguage
+		: 
+		"ro"
+
+ and into the response section we can see the response, for example>
+		{
+			"detectedSourceLanguage": {
+				"name": "Spanish",
+				"mmtCode": "es"
+			},
+			"detectionIsReliable": false,
+			"dictionary": null,
+			"translationSource": "MACHINE_TRANSLATION",
+			"translation": "Bună ziua mamă",
+			"termMatches": null,
+			"textAnnotations": null,
+			"sentenceSpans": [
+				{
+					"source": "MACHINE_TRANSLATION",
+					"startSourceIndex": 0,
+					"endSourceIndex": 9,
+					"startTargetIndex": 0,
+					"endTargetIndex": 13
+				}
+			]
+		}
+		
+		
+
+
+4) The system supports 10 concurrent users doing text translation.
+In this point I had the idea and with a research I get to the following: first set the request at postman and ducplicate 10 times the request into a collection. Then from console and using newman tool I could execute all request at once, but getting a 401 unauthorized. I think maybe i should send the authorization token in an environment file, but run out of time.
+
+Find below my console log:
+C:\Users\Titi\Desktop>newman run LWt.postman_collection.json
+(node:14952) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+newman
+
+LWt
+
+→ TranslateText
+  POST https://demo-qa-lwt.api.staging.lw-ml.net/api/v1/translations/text [401 Unauthorized, 348B, 805ms]
+
+→ TranslateText 1
+  POST https://demo-qa-lwt.api.staging.lw-ml.net/api/v1/translations/text [401 Unauthorized, 347B, 254ms]
+
+→ TranslateText 2
+  POST https://demo-qa-lwt.api.staging.lw-ml.net/api/v1/translations/text [401 Unauthorized, 348B, 274ms]
+
+→ TranslateText 3
+  POST https://demo-qa-lwt.api.staging.lw-ml.net/api/v1/translations/text [401 Unauthorized, 347B, 265ms]
+
+→ TranslateText 4
+  POST https://demo-qa-lwt.api.staging.lw-ml.net/api/v1/translations/text [401 Unauthorized, 348B, 272ms]
+
+→ TranslateText 5
+  POST https://demo-qa-lwt.api.staging.lw-ml.net/api/v1/translations/text [401 Unauthorized, 347B, 247ms]
+
+→ TranslateText 6
+  POST https://demo-qa-lwt.api.staging.lw-ml.net/api/v1/translations/text [401 Unauthorized, 347B, 250ms]
+
+→ TranslateText 7
+  POST https://demo-qa-lwt.api.staging.lw-ml.net/api/v1/translations/text [401 Unauthorized, 347B, 254ms]
+
+→ TranslateText 8
+  POST https://demo-qa-lwt.api.staging.lw-ml.net/api/v1/translations/text [401 Unauthorized, 347B, 252ms]
+
+→ TranslateText 9
+  POST https://demo-qa-lwt.api.staging.lw-ml.net/api/v1/translations/text [401 Unauthorized, 347B, 607ms]
+
+┌─────────────────────────┬─────────────────────┬────────────────────┐
+│                         │            executed │             failed │
+├─────────────────────────┼─────────────────────┼────────────────────┤
+│              iterations │                   1 │                  0 │
+├─────────────────────────┼─────────────────────┼────────────────────┤
+│                requests │                  10 │                  0 │
+├─────────────────────────┼─────────────────────┼────────────────────┤
+│            test-scripts │                   0 │                  0 │
+├─────────────────────────┼─────────────────────┼────────────────────┤
+│      prerequest-scripts │                   0 │                  0 │
+├─────────────────────────┼─────────────────────┼────────────────────┤
+│              assertions │                   0 │                  0 │
+├─────────────────────────┴─────────────────────┴────────────────────┤
+│ total run duration: 4.3s                                           │
+├────────────────────────────────────────────────────────────────────┤
+│ total data received: 690B (approx)                                 │
+├────────────────────────────────────────────────────────────────────┤
+│ average response time: 348ms [min: 247ms, max: 805ms, s.d.: 184ms] │
+└────────────────────────────────────────────────────────────────────┘
+
+
+5) Could you tell what kind of data is contained in the token?
+this is what i can get from this token:
+  "FirstName": "FirstName",
+  "LastName": "LastName",
+  "PhotoFseId": "PhotoFseId",
+  "UserId": 1105689,
+  "DefaultCompanyId": 1,
+  "LwtSubscriptionId": null,
+  "Permissions": [
+    3092
+  ],
+  "ExpirationTime": "/Date(1702657315717)/"
+}
+
